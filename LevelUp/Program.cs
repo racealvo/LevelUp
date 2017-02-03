@@ -20,7 +20,7 @@ namespace LevelUp
             counter++;
         }
 
-        public int Counter { get { return counter; } }
+        public static int Counter { get { return counter; } }
     }
 
     public class CountMe
@@ -36,6 +36,10 @@ namespace LevelUp
     }
 
     public class Counted
+    {
+    }
+
+    public class ZeroInstances
     {
     }
 
@@ -55,7 +59,7 @@ namespace LevelUp
             {
                 classList.Add(new Parent<T>());
             }
-            Console.WriteLine("{0} {1}", typeof(T).Name, classList[0].Counter);
+            Console.WriteLine("{0} {1}", typeof(T).Name, Parent<T>.Counter);
 
             return classList;
         }
@@ -71,6 +75,7 @@ namespace LevelUp
             List<Parent<CountMeToo>> countMeToo = Factory<CountMeToo>(4);
             List<Parent<AndMe>> andMe           = Factory<AndMe>(12);
             List<Parent<Counted>> counted       = Factory<Counted>(5);
+            List<Parent<ZeroInstances>> zeros   = Factory<ZeroInstances>(0);
         }
     }
 }
