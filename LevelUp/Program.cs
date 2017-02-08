@@ -12,8 +12,10 @@ namespace LevelUpSandbox
         public int Count { get; set; }
     }
 
-    public class Parent
+    public class Parent : IDisposable
     {
+        private bool disposed = false;
+
         private static List<Counter> listCounters = new List<Counter>();
         public static int TheCount(Type type)
         {
@@ -26,6 +28,7 @@ namespace LevelUpSandbox
 
         public Parent(Type type)
         {
+            //Console.WriteLine("{0}", this.GetType().Name);
             Counter myClass = listCounters.Find(counterObject => counterObject.ClassType == type);
             if (myClass == null)
             {
@@ -38,6 +41,25 @@ namespace LevelUpSandbox
             {
                 myClass.Count++;
             }
+        }
+
+
+        ~Parent()
+        {
+            Console.WriteLine("Parent being finalized");
+            this.Dispose();
+        }
+
+        public void Dispose()
+        {
+            Counter node = listCounters.Find(counterObject => counterObject.ClassType == this.GetType());
+            node.Count = node.Count - 1;
+            if (!this.disposed)
+            {
+                Console.WriteLine("Parent being disposed");
+            }
+            this.disposed = true;
+            GC.SuppressFinalize(this);
         }
     }
 
@@ -106,6 +128,11 @@ namespace LevelUpSandbox
             List<Counted> counted = Factory<Counted>(5);
             List<ZeroInstances> zeros = Factory<ZeroInstances>(0);
             zeros = Factory<ZeroInstances>(-1);
+
+            CountMe node = countMe[0];
+            countMe.Remove(node);
+            node.Dispose();
+            Console.WriteLine("CountMe: {0}", countMe.Count);
         }
     }
 }
