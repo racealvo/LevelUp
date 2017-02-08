@@ -90,6 +90,7 @@ namespace LevelUpSandbox
             List<T> classList = new List<T>();
             for (int i = 0; i < instances; i++)
             {
+                // This step is like a new - but works with generics.  Add the new node to the list.
                 classList.Add((T)Activator.CreateInstance<T>());
             }
             Console.WriteLine("{0} {1}", typeof(T).Name, Parent.TheCount(typeof(T)));
