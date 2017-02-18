@@ -6,12 +6,20 @@ using System.Threading.Tasks;
 
 namespace LevelUpSandbox
 {
+    /// <summary>
+    /// Counter class - track a class type, and a counter for the number of instances of the class created.
+    /// This object is used in a list (listCounters) in the Parent
+    /// </summary>
     public class Counter
     {
         public Type ClassType { get; set; }
         public int Count { get; set; }
     }
 
+    /// <summary>
+    /// Parent class - Maintain a list of Counter objects which hold a class type and counter representing the number of instances a class created.
+    /// This class is derived from the IDisposable interface which exposes/requires the Dispose method related to garbage collection.
+    /// </summary>
     public class Parent : IDisposable
     {
         private bool disposed = false;
@@ -24,11 +32,12 @@ namespace LevelUpSandbox
             return count;
         }
 
-        //private static Counter FindCounter
-
+        /// <summary>
+        /// Find the ClassType in listCounters.  Add it if is not yet in the list.  Increment the count.
+        /// </summary>
+        /// <param name="type"></param>
         public Parent(Type type)
         {
-            //Console.WriteLine("{0}", this.GetType().Name);
             Counter myClass = listCounters.Find(counterObject => counterObject.ClassType == type);
             if (myClass == null)
             {
@@ -43,21 +52,26 @@ namespace LevelUpSandbox
             }
         }
 
-
+        /// <summary>
+        /// Deal with garbage collection - call Dispose
+        /// </summary>
         ~Parent()
         {
-            Console.WriteLine("Parent being finalized");
+            //Console.WriteLine("Parent being finalized");
             this.Dispose();
         }
 
+        /// <summary>
+        /// Deal with garbage collection
+        /// </summary>
         public void Dispose()
         {
             Counter node = listCounters.Find(counterObject => counterObject.ClassType == this.GetType());
             node.Count = node.Count - 1;
-            if (!this.disposed)
-            {
-                Console.WriteLine("Parent being disposed");
-            }
+            //if (!this.disposed)
+            //{
+            //    Console.WriteLine("Parent being disposed");
+            //}
             this.disposed = true;
             GC.SuppressFinalize(this);
         }
@@ -129,10 +143,11 @@ namespace LevelUpSandbox
             List<ZeroInstances> zeros = Factory<ZeroInstances>(0);
             zeros = Factory<ZeroInstances>(-1);
 
+            // Track count when removing a class instance prior to garbage collection
             CountMe node = countMe[0];
             countMe.Remove(node);
             node.Dispose();
-            Console.WriteLine("CountMe: {0}", countMe.Count);
+            Console.WriteLine("\nAfter removing and disposing, CountMe: {0}\n", countMe.Count);
         }
     }
 }
